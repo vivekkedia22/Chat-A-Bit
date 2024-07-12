@@ -7,7 +7,7 @@ import mongoSanitize from "express-mongo-sanitize";
 import cookieParser from "cookie-parser";
 import compression from "compression";
 import fileUpload from "express-fileupload";
-
+import routes from "./routes/index.js"
 //dotEnv connfig
 dotenv.config();
 
@@ -43,8 +43,10 @@ app.use(fileUpload({ useTempFiles: true }));
 //cors
 app.use(cors())
 
-app.get("/", (req, res) => {
-  res.send("Hello from Server");
-});
+
+//api v1 routes
+app.use("/api/v1",routes);
+
+
 
 export default app;
