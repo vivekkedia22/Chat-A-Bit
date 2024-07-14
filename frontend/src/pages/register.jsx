@@ -1,4 +1,5 @@
 import React from 'react'
+import RegisterForm from '../components/auth/RegisterForm'
 
 const register = () => {
   return (
@@ -6,7 +7,7 @@ const register = () => {
       {/*Container*/}
       <div className="flex w-[1600px] mx-auto h-full">
         {/*Register form */}
-        {/* <RegisterForm /> */}
+        <RegisterForm/>
         
       </div>
     </div>
