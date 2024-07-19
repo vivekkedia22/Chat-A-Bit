@@ -30,6 +30,7 @@ const registerUser = asyncHandler(async (req, res) => {
       name: newUser.name,
       email: newUser.email,
       picture: newUser.picture,
+      status:newUser.status,
       token: accessToken,
     };
     const options = {
@@ -42,7 +43,7 @@ const registerUser = asyncHandler(async (req, res) => {
       .json(
         new ApiResponse(
           200,
-          { accessToken, user },
+          { user },
           "User registered successfully"
         ).data
       );
@@ -132,7 +133,7 @@ const refreshToken = asyncHandler(async (req, res, next) => {
         name: user.name,
         email: user.email,
         picture: user.picture,
-        token: accessToken,
+        access_token: accessToken,
       }},
        
     ).data
