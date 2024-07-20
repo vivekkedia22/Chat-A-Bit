@@ -9,7 +9,10 @@ const createUser = async (userData) => {
   const { name, email, picture, status, password } = userData;
 
   // /check if fields are empty
-
+  console.log(userData);
+  console.log(name);
+  console.log(email);
+  console.log(password);
   if (!name || !email || !password) {
     throw new ApiError(401, "Please fill all the fields");
   }

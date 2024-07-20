@@ -1,21 +1,71 @@
-import React from 'react'
-import {useForm} from "react-hook-form"
-import {yupResolver} from "@hookform/resolvers/yup"
-import { signUpSchema } from '../../utils/validation.js';
-import AuthInput from './AuthInput.jsx';
-import {Link} from "react-router-dom"
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { signUpSchema } from "../../utils/validation.js";
+import AuthInput from "./AuthInput.jsx";
+import { Link, useNavigate } from "react-router-dom";
 import PulseLoader from "react-spinners/PulseLoader";
-import {useSelector} from "react-redux"
+import { useDispatch, useSelector } from "react-redux";
+import { changeStatus, registerUser } from "../../features/userSlice.js";
+import Picture from "./Picture.jsx";
+import axios from "axios";
 const RegisterForm = () => {
-  const {status}=useSelector((state)=>state.user)
-    const {register,handleSubmit,watch,formState:{errors}}=useForm(
-    {
-      resolver:yupResolver(signUpSchema)
+  const cloud_secret = import.meta.env.VITE_CLOUD_SECRET;
+  const cloud_name = import.meta.env.VITE_CLOUD_NAME;
+  const { status, error } = useSelector((state) => state.user);
+  const [picture, setPicture] = useState();
+  const [readablePicture, setReadablePicture] = useState("");
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(signUpSchema),
+  });
+
+  const onSubmit = async (data) => {
+    // console.log("checking if pic is there?",picture);
+    // dispatch(changeStatus("loading"));
+    if (picture) {
+      //upload to cloudinary and then register user
+      await uploadImage().then(async (response) => {
+        console.log("from the register with image",{...data});
+        let res = await dispatch(
+          registerUser({ ...data, picture: response.secure_url })
+        );
+        if (res?.payload) {
+          navigate("/");
+        }
+      });
+    } else {
+      let res = await dispatch(registerUser({ ...data, picture: "" }));
+      if (res?.payload) {
+        navigate("/");
+      }
     }
+    // console.log("from on submit", res);
+    // if (res.payload) {
+    //   navigate("/");
+    // }
+  };
+  const uploadImage = async () => {
+    let formData = new FormData();
+    formData.append("upload_preset", cloud_secret);
+    formData.append("file", picture);
+    const { data } = await axios.post(
+      `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,
+      formData
     );
-    const onSubmit=(data)=>console.log(data);
-    console.log("values",watch());
-    console.log("errors",errors );
+    console.log("hello this is from uploadonImage", data);
+    return data;
+  };
+  console.log("logging pic and readpic", picture);
+  console.log(readablePicture);
+  console.log("values", watch());
+  // console.log("errors",errors );
   return (
     <div className="min-h-screen w-full flex items-center justify-center overflow-hidden">
       {/* Container */}
@@ -56,17 +106,17 @@ const RegisterForm = () => {
             error={errors?.password?.message}
           />
           {/* Picture */}
-          {/* <Picture
+          <Picture
             readablePicture={readablePicture}
             setReadablePicture={setReadablePicture}
             setPicture={setPicture}
-          /> */}
+          />
           {/*if we have an error*/}
-          {/* {error ? (
+          {error ? (
             <div>
               <p className="text-red-400">{error}</p>
             </div>
-          ) : null} */}
+          ) : null}
           {/*Submit button*/}
           <button
             className="w-full flex justify-center bg-green_1 text-gray-100 p-4 rounded-full tracking-wide
@@ -78,7 +128,7 @@ const RegisterForm = () => {
               <PulseLoader color="#fff" size={16} />
             ) : (
               "Sign up"
-             )} 
+            )}
           </button>
           {/* Sign in link */}
           <p className="flex flex-col items-center justify-center mt-10 text-center text-md dark:text-dark_text_1">
@@ -93,7 +143,7 @@ const RegisterForm = () => {
         </form>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default RegisterForm
+export default RegisterForm;

@@ -8,12 +8,14 @@ import { findUser } from "../services/user.service.js";
 const registerUser = asyncHandler(async (req, res) => {
   try {
     const { name, email, picture, status, password } = req.body;
+    // console.log("request",req);
+    console.log(req.body);
     const newUser = await createUser({
       name,
       email,
       picture,
       status,
-      password,
+      password
     });
     const accessToken = await generateToken(
       { userId: newUser._id },
@@ -43,7 +45,7 @@ const registerUser = asyncHandler(async (req, res) => {
       .json(
         new ApiResponse(
           200,
-          { user },
+          user,
           "User registered successfully"
         ).data
       );
@@ -128,12 +130,12 @@ const refreshToken = asyncHandler(async (req, res, next) => {
   res.json(
     new ApiResponse(
       200,
-     { accessToken,user : {
+     { user : {
         _id: user._id,
         name: user.name,
         email: user.email,
         picture: user.picture,
-        access_token: accessToken,
+       token: accessToken,
       }},
        
     ).data

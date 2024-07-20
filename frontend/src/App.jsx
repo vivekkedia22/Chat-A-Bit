@@ -8,9 +8,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 function App() {
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.user);
-  const { token } = user;
-   
+  const { user={} } = useSelector((state) => {
+    console.log("this is state",state);
+    return state.user});
+  console.log("yahahahahha",user);
+  const { token=""} = user;
+  console.log("eheheheheh",token);
+  //  const {user}=useSelector((state)=>({...state}))
+   console.log("user",user);
   return (
     <div className="dark">
       <Router>
@@ -18,7 +23,7 @@ function App() {
           <Route
             path="/"
             element={
-              token ? <Home socket={socket} /> : <Navigate to="/login" />
+              token ? <Home  /> : <Navigate to="/login" />
             }
           />
           <Route
@@ -32,6 +37,8 @@ function App() {
         </Routes>
       </Router>
     </div>
+    // <>
+    // hello</>
   );
 }
 

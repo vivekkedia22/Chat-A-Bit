@@ -3,7 +3,7 @@ import { persistReducer, persistStore } from "redux-persist";
 import createFilter from "redux-persist-transform-filter";
 import storage from "redux-persist/lib/storage";
 //slices
-import userSlice from "../features/userSlice";
+import userSlice from "../features/userSlice.js";
 // import chatSlice from "../features/chatSlice";
 // saveUserOnlyFilterdddddd
 const saveUserOnlyFilter = createFilter("user", ["user"]);
